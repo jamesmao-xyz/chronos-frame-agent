@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title>Chronos Smart Frame</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #000000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            cursor: none; /* Ideal for kiosk smart frames */
+        }
+
+        /* Edge-to-edge full resolution container */
+        #frame-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000000;
+        }
+
+        /* Dual-layer GPU-accelerated crossfade elements */
+        .frame-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            pointer-events: none;
+        }
+
+        .frame-layer.visible {
+            opacity: 1;
+            z-index: 2;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="frame-canvas" onclick="advancePhoto()">
+        <img id="layerA" class="frame-layer visible" src="image_1.png" alt="Smart Frame Canvas">
+        <img id="layerB" class="frame-layer" src="image_1.png" alt="Smart Frame Canvas">
+    </div>
+
+    <script>
+        // State Management
+        let activeLayer = document.getElementById("layerA");
+        let inactiveLayer = document.getElementById("layerB");
+        let currentActiveIndex = 0;
+        let rotationIntervalSeconds = 300;
+        let lastEventTimestamp = Date.now();
+        let localFallbackTimer = null;
+        let isTransitioning = false;
+
+        let playlist = [
+            { url: "image_1.png", index: 0 },
+            { url: "image_2.png", index: 1 },
+            { url: "image_3.png", index: 2 }
+        ];
+
+        // Dual-Layer Seamless Preload & Crossfade
+        function transitionToImage(imageUrl, targetIndex) {
+            if (!imageUrl) return;
+
+            // Avoid redundant reload if already showing
+            const currentSrc = activeLayer.getAttribute("src");
+            if (currentSrc === imageUrl && targetIndex === currentActiveIndex) {
+                return;
+            }
+
+            // Preload image off-screen before triggering crossfade transition
+            const preloadImg = new Image();
+            preloadImg.onload = () => {
+                isTransitioning = true;
+                inactiveLayer.src = imageUrl;
+                inactiveLayer.classList.add("visible");
+                activeLayer.classList.remove("visible");
+
+                // Swap layer references
+                const temp = activeLayer;
+                activeLayer = inactiveLayer;
+                inactiveLayer = temp;
+
+                currentActiveIndex = targetIndex !== undefined ? targetIndex : 0;
+
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 1500);
+            };
+            preloadImg.onerror = () => {
+                console.warn("Failed to load image:", imageUrl);
+                isTransitioning = false;
+            };
+            preloadImg.src = imageUrl;
+        }
+
+        // Tap/click screen to advance to next photo
+        function advancePhoto() {
+            if (isTransitioning) return;
+            const nextIdx = (currentActiveIndex + 1) % playlist.length;
+            const item = playlist[nextIdx];
+            if (item) {
+                transitionToImage(item.url || item.filename, nextIdx);
+                fetch("/api/rotate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ index: nextIdx })
+                }).catch(() => {});
+            }
+        }
+
+        // Update playlist state
+        function updatePlaylist(newPlaylist) {
+            if (newPlaylist && Array.isArray(newPlaylist) && newPlaylist.length > 0) {
+                playlist = newPlaylist;
+            }
+        }
+
+        // Fallback local rotation if SSE connection drops
+        function startLocalFallback() {
+            if (localFallbackTimer) clearInterval(localFallbackTimer);
+            localFallbackTimer = setInterval(() => {
+                if (Date.now() - lastEventTimestamp > 45000) {
+                    // SSE inactive, advance locally
+                    const nextIdx = (currentActiveIndex + 1) % playlist.length;
+                    const item = playlist[nextIdx];
+                    if (item) {
+                        transitionToImage(item.url || item.filename, nextIdx);
+                    }
+                }
+            }, rotationIntervalSeconds * 1000);
+        }
+
+        // Server-Sent Events (SSE) Client Setup
+        function initSSE() {
+            const evtSource = new EventSource("/events");
+
+            evtSource.onopen = () => {
+                console.log("Connected to Chronos Smart Frame SSE Stream.");
+                lastEventTimestamp = Date.now();
+            };
+
+            evtSource.addEventListener("init", (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    lastEventTimestamp = Date.now();
+                    if (data.rotation_interval_seconds) {
+                        rotationIntervalSeconds = data.rotation_interval_seconds;
+                    }
+                    if (data.playlist) {
+                        updatePlaylist(data.playlist);
+                    }
+                    transitionToImage(data.active_image_url, data.active_index || 0);
+                } catch (err) {
+                    console.error("Error parsing init event:", err);
+                }
+            });
+
+            evtSource.addEventListener("rotate", (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    lastEventTimestamp = Date.now();
+                    if (data.playlist) {
+                        updatePlaylist(data.playlist);
+                    }
+                    transitionToImage(data.active_image_url, data.active_index);
+                } catch (err) {
+                    console.error("Error parsing rotate event:", err);
+                }
+            });
+
+            evtSource.addEventListener("new_photo", (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    lastEventTimestamp = Date.now();
+                    if (data.playlist) {
+                        updatePlaylist(data.playlist);
+                    }
+                    transitionToImage(data.active_image_url, 0);
+                } catch (err) {
+                    console.error("Error parsing new_photo event:", err);
+                }
+            });
+
+            evtSource.onerror = (err) => {
+                console.warn("SSE connection interrupted, auto-reconnecting:", err);
+            };
+        }
+
+        // Initialize display
+        document.addEventListener("DOMContentLoaded", () => {
+            initSSE();
+            startLocalFallback();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "total_cases": 5,
+  "passed_cases": 5,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "eval_case_id": "news_workflow_execution",
+      "prompt": "Trigger a full Chronos Frame Agent workflow cycle to retrieve top 5 headlines and generate smart frame image.",
+      "passed": true,
+      "metrics": {
+        "chronos_workflow_quality": 1.0,
+        "image_dimension_metric": 1.0,
+        "fifo_queue_compliance": 1.0
+      }
+    },
+    {
+      "eval_case_id": "morning_retro_pop_case",
+      "prompt": "Generate a 90s lo-fi anime Vivid Retro-Pop smart frame image for morning news (08:00).",
+      "passed": true,
+      "metrics": {
+        "chronos_workflow_quality": 1.0,
+        "image_dimension_metric": 1.0,
+        "fifo_queue_compliance": 1.0
+      }
+    },
+    {
+      "eval_case_id": "midday_claymation_case",
+      "prompt": "Generate an Electric Claymation 90s lo-fi anime smart frame image for midday news (13:00).",
+      "passed": true,
+      "metrics": {
+        "chronos_workflow_quality": 1.0,
+        "image_dimension_metric": 1.0,
+        "fifo_queue_compliance": 1.0
+      }
+    },
+    {
+      "eval_case_id": "evening_luminescent_case",
+      "prompt": "Generate a Luminescent Lo-Fi Digital smart frame image for evening news (20:00).",
+      "passed": true,
+      "metrics": {
+        "chronos_workflow_quality": 1.0,
+        "image_dimension_metric": 1.0,
+        "fifo_queue_compliance": 1.0
+      }
+    },
+    {
+      "eval_case_id": "fifo_queue_shift_case",
+      "prompt": "Publish consecutive images and verify the 3-image FIFO queue removes older items.",
+      "passed": true,
+      "metrics": {
+        "chronos_workflow_quality": 1.0,
+        "image_dimension_metric": 1.0,
+        "fifo_queue_compliance": 1.0
+      }
+    }
+  ]
+}

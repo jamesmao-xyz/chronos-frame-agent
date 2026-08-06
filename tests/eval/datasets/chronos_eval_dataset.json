@@ -1,0 +1,39 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "news_workflow_execution",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Trigger a full Chronos Frame Agent workflow cycle to retrieve top 5 headlines and generate smart frame image."}]
+      }
+    },
+    {
+      "eval_case_id": "morning_retro_pop_case",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Generate a 90s lo-fi anime Vivid Retro-Pop smart frame image for morning news (08:00)."}]
+      }
+    },
+    {
+      "eval_case_id": "midday_claymation_case",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Generate an Electric Claymation 90s lo-fi anime smart frame image for midday news (13:00)."}]
+      }
+    },
+    {
+      "eval_case_id": "evening_luminescent_case",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Generate a Luminescent Lo-Fi Digital smart frame image for evening news (20:00)."}]
+      }
+    },
+    {
+      "eval_case_id": "fifo_queue_shift_case",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Publish consecutive images and verify the 3-image FIFO queue removes older items."}]
+      }
+    }
+  ]
+}

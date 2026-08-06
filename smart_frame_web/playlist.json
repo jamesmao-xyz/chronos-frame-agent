@@ -1,0 +1,30 @@
+{
+  "updated_at": "2026-08-06T10:04:51.736262",
+  "version": 1786010691,
+  "playlist": [
+    {
+      "filename": "image_1.png",
+      "url": "image_1.png?v=1786010691",
+      "label": "image_1 (Latest)",
+      "age": "Latest",
+      "timestamp": "Thursday, August 06, 2026 \u2022 10:04",
+      "index": 0
+    },
+    {
+      "filename": "image_2.png",
+      "url": "image_2.png?v=1786010691",
+      "label": "image_2 (-15 min)",
+      "age": "-15 min",
+      "timestamp": "T-15 min",
+      "index": 1
+    },
+    {
+      "filename": "image_3.png",
+      "url": "image_3.png?v=1786010691",
+      "label": "image_3 (-30 min)",
+      "age": "-30 min",
+      "timestamp": "T-30 min",
+      "index": 2
+    }
+  ]
+}

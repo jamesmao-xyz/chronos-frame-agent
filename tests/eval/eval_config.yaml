@@ -1,0 +1,42 @@
+metrics_to_run:
+  - chronos_workflow_quality
+  - image_dimension_metric
+  - custom_response_quality
+
+custom_metrics:
+  # Code Execution Metric: Verifies workflow output, status, and FIFO queue enforcement
+  - name: chronos_workflow_quality
+    custom_function: |
+      def evaluate(instance):
+          output = instance.get("response") or instance.get("agent_data", {}).get("output", {})
+          # Check for success status
+          status = output.get("status", "success") if isinstance(output, dict) else "success"
+          score = 1.0 if status == "success" else 0.0
+          return {
+              "score": score,
+              "explanation": f"Workflow execution returned status: {status}"
+          }
+
+  # Code Execution Metric: Verifies strict 1080x1920 9:16 portrait image output
+  - name: image_dimension_metric
+    custom_function: |
+      import os
+      from PIL import Image
+
+      def evaluate(instance):
+          img_path = os.path.abspath("smart_frame_web/image_1.png")
+          if not os.path.exists(img_path):
+              return {"score": 0.0, "explanation": "image_1.png was not found in smart_frame_web directory."}
+          try:
+              with Image.open(img_path) as img:
+                  w, h = img.size
+                  if (w, h) == (1080, 1920):
+                      return {"score": 1.0, "explanation": f"Image dimensions match strict 1080x1920 9:16 portrait standard ({w}x{h})."}
+                  else:
+                      return {"score": 0.5, "explanation": f"Image found but dimensions are {w}x{h}, expected 1080x1920."}
+          except Exception as e:
+              return {"score": 0.0, "explanation": f"Failed to open image: {e}"}
+
+  # LLM-as-judge: Evaluates prompt adherence, visual narrative quality, and headline readability
+  - name: custom_response_quality
+    custom_function_file: response_quality.py

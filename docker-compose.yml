@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  chronos-smart-frame:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: chronos-frame-agent:latest
+    container_name: chronos-smart-frame
+    restart: unless-stopped
+    ports:
+      - "8168:8168"
+    volumes:
+      # Mount the auto-refreshing Application Default Credentials (ADC) file read-only
+      - ./secrets/application_default_credentials.json:/secrets/application_default_credentials.json:ro
+      # Persist the generated 3-image FIFO gallery across container restarts
+      - ./smart_frame_web:/app/smart_frame_web
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/application_default_credentials.json
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - GOOGLE_CLOUD_LOCATION=${GOOGLE_CLOUD_LOCATION:-us-central1}
+      - GOOGLE_GENAI_USE_VERTEXAI=true
+      - PORT=8168
+      - SCHEDULE_INTERVAL_SECONDS=${SCHEDULE_INTERVAL_SECONDS:-900}
+      - ROTATION_INTERVAL_SECONDS=${ROTATION_INTERVAL_SECONDS:-300}
