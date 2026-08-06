@@ -23,3 +23,22 @@ services:
       - PORT=8168
       - SCHEDULE_INTERVAL_SECONDS=${SCHEDULE_INTERVAL_SECONDS:-900}
       - ROTATION_INTERVAL_SECONDS=${ROTATION_INTERVAL_SECONDS:-300}
+      - TZ=${TZ:-Australia/Sydney}
+
+  # 🌙 Automatic Nightly Shutdown (10 PM) & Morning Start (6 AM) - Australian Eastern Time
+  nightly-scheduler:
+    image: docker:cli
+    container_name: chronos-scheduler
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=${TZ:-Australia/Sydney}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        apk add --no-cache tzdata > /dev/null 2>&1
+        echo "0 22 * * * docker stop chronos-smart-frame" > /etc/crontabs/root
+        echo "0 6 * * * docker start chronos-smart-frame" >> /etc/crontabs/root
+        crond -f -l 2
