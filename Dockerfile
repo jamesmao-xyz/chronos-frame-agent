@@ -12,10 +12,12 @@ COPY pyproject.toml README.md uv.lock* ./
 # Step 2: Install ONLY production dependencies (excludes 'dev', 'eval', and 'lint' groups)
 RUN uv sync --no-dev --no-install-project --default-index https://pypi.org/simple --python 3.11
 
-# Step 3: Copy application source code and web assets
+# Step 3: Copy application source code, prompt templates, and web assets
 COPY app ./app
+COPY prompts ./prompts
 COPY run_loop.py ./run_loop.py
 COPY smart_frame_web ./smart_frame_web
+COPY agents-cli-manifest.yaml ./agents-cli-manifest.yaml
 
 # Step 4: Finalize sync for the project environment (strictly without dev dependencies)
 RUN uv sync --no-dev --default-index https://pypi.org/simple --python 3.11
