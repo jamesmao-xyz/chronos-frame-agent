@@ -11,7 +11,7 @@ The agent operates on an autonomous **15-minute recurring generation schedule**,
 
 ### Core Goals
 1. **Autonomous News Ingestion & Deduplication**: Ingest top 5 global news headlines periodically, apply content safety filters, and utilize agent memory (`HeadlineMemory`) with sliding-window Jaccard keyword deduplication to prevent repetitive stories across photos.
-2. **Portrait Graphic Generation**: Convert summary context into a stylized, high-contrast, visually appealing 9:16 (1080x1920 portrait) bulletin dashboard image using Google GenAI / Gemini image models with dynamic time-of-day styling (Morning Retro-Pop, Midday Claymation, Evening Luminescent).
+2. **Portrait Graphic Generation**: Convert summary context into a stylized, high-contrast, visually appealing 9:16 (1080x1920 portrait) bulletin dashboard image using Google GenAI / Gemini image models with Nano Banana iconic 3D figure styling (Sunrise Vinyl Pop, Electric Matte Figurine, Luminescent Cyber-Toy).
 3. **Race-Condition-Free FIFO Queue Publisher**: Manage `smart_frame_web/` queue lifecycle (`image_1.png` → `image_2.png` → `image_3.png`) while persisting an atomic `playlist.json` manifest with cache-busting version tags (`?v=...`) to eliminate image tearing, stale cache collisions, or repeated content.
 4. **Full-Screen Ambient Smart Frame Display**: Deliver a pure edge-to-edge canvas taking 100% of the display viewport without intrusive overlays (no persistent clocks, borders, or thumbnail sidebars), using dual-layer GPU crossfades and pre-rendering.
 5. **Real-Time Synchronized Coordination**: Synchronize generation and slideshow rotation via Server-Sent Events (SSE), eliminating uncoordinated client reload timers.
@@ -81,10 +81,10 @@ The agent operates on an autonomous **15-minute recurring generation schedule**,
 
 ### Tool 2: `ImagenTool` ([app/tools.py]
 - **Purpose**: Render a high-contrast 1080x1920 (9:16 portrait) bulletin dashboard graphic.
-- **Dynamic Time-of-Day Styling**:
-  - **Morning (05:00 - 11:59)**: *Vivid Retro-Pop* (warm apricot, teal, golden yellow accents).
-  - **Midday (12:00 - 17:59)**: *Electric Claymation* (bold cobalt, sunset coral, citrus amber).
-  - **Evening/Night (18:00 - 04:59)**: *Luminescent Lo-Fi Digital* (midnight navy, neon cyan, amethyst).
+- **Dynamic Time-of-Day Styling (Nano Banana 3D Figure Aesthetic)**:
+  - **Morning (00:00 - 10:00)**: *Sunrise Vinyl Pop* (glossy pastel vinyl toy textures, golden morning key lighting).
+  - **Midday (10:00 - 16:00)**: *Electric Matte Figurine* (matte resin figurines, bright studio three-point lighting).
+  - **Evening/Night (16:00 - 24:00)**: *Luminescent Cyber-Toy* (translucent vinyl 3D figures, neon twilight ambient bloom).
 - **Outputs**: Dictionary containing `image_bytes: bytes`, dimensions (`1080x1920`), and style metadata.
 
 ### Tool 3: `PublisherTool` ([app/tools.py]

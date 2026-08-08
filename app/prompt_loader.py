@@ -1,9 +1,19 @@
 import os
 from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 # Root directory of prompt markdown files
 PROMPTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "prompts"))
+
+
+def get_current_local_time() -> datetime:
+    """Returns the current datetime in the configured local timezone (defaults to Australia/Sydney)."""
+    tz_name = os.environ.get("TZ", "Australia/Sydney")
+    try:
+        return datetime.now(ZoneInfo(tz_name))
+    except Exception:
+        return datetime.now()
 
 
 def _read_prompt_file(filename: str) -> str:
@@ -29,42 +39,51 @@ def get_news_anchor_prompt(recent_exclusions: list[str] | None = None) -> str:
 
 def get_time_of_day_style(hour: int | None = None) -> dict[str, Any]:
     """
-    Computes time-of-day specific visual style modifier and palette:
-    - 00:00 - 10:00 (Morning): 'Vivid Retro-Pop'
-    - 10:00 - 16:00 (Daytime): 'Electric Claymation'
-    - 16:00 - 24:00 (Evening/Night): 'Luminescent Lo-Fi Digital'
+    Computes time-of-day specific visual style modifier and palette for Nano Banana 3D figure aesthetic:
+    - 00:00 - 10:00 (Morning): 'Sunrise Vinyl Pop'
+    - 10:00 - 16:00 (Daytime): 'Electric Matte Figurine'
+    - 16:00 - 24:00 (Evening/Night): 'Luminescent Cyber-Toy'
     """
     if hour is None:
-        hour = datetime.now().hour
+        hour = get_current_local_time().hour
 
     if 0 <= hour < 10:
-        period_name = "Vivid Retro-Pop (Morning)"
+        period_name = "Sunrise Vinyl Pop (Morning)"
         style_doc = _read_prompt_file("styles/morning_retro_pop.md")
-        modifier = "Vivid Retro-Pop aesthetic, vibrant energetic morning sunrise lighting, bold saturated retro pastel tones, playful 90s anime pop art energy"
+        modifier = (
+            "Sunrise Vinyl Pop aesthetic, Nano Banana iconic 3D figure style, vibrant morning sunrise studio key lighting, "
+            "glossy pastel vinyl toy textures, charming stylized 3D collectible figurines in a miniature diorama"
+        )
         palette = {
             "bg_top": (253, 224, 71),  # Bright morning pastel yellow
-            "bg_bottom": (244, 114, 182),  # Warm retro pink
+            "bg_bottom": (244, 114, 182),  # Warm retro candy pink
             "accent1": (56, 189, 248),  # Pop cyan
             "accent2": (234, 88, 12),  # Vivid orange
             "scrim_alpha": 180,
             "title_color": (254, 240, 138),
         }
     elif 10 <= hour < 16:
-        period_name = "Electric Claymation (Midday)"
+        period_name = "Electric Matte Figurine (Midday)"
         style_doc = _read_prompt_file("styles/midday_claymation.md")
-        modifier = "Electric Claymation style, tactile sculpted 3D clay textures, dynamic electric bright studio lighting, playful handmade clay-animated aesthetic"
+        modifier = (
+            "Electric Matte Figurine aesthetic, Nano Banana iconic 3D figure style, high-clarity daylight studio three-point lighting, "
+            "smooth sculpted matte resin figurines, tactile colorful 3D designer toy diorama with gentle ambient occlusion"
+        )
         palette = {
-            "bg_top": (249, 115, 22),  # Electric clay orange
+            "bg_top": (249, 115, 22),  # Electric figurine orange
             "bg_bottom": (99, 102, 241),  # Electric indigo
-            "accent1": (52, 211, 153),  # Clay mint
-            "accent2": (236, 72, 153),  # Hot magenta clay
+            "accent1": (52, 211, 153),  # Mint resin
+            "accent2": (236, 72, 153),  # Hot magenta figurine
             "scrim_alpha": 185,
             "title_color": (253, 230, 138),
         }
     else:  # 16:00 - 24:00
-        period_name = "Luminescent Lo-Fi Digital (Evening)"
+        period_name = "Luminescent Cyber-Toy (Evening)"
         style_doc = _read_prompt_file("styles/evening_luminescent.md")
-        modifier = "Luminescent Lo-Fi Digital aesthetic, glowing neon pastel gradients, cozy twilight and nighttime ambient bloom, dreamy cyber-storybook lighting"
+        modifier = (
+            "Luminescent Cyber-Toy aesthetic, Nano Banana iconic 3D figure style, glowing neon twilight ambient bloom, "
+            "translucent luminescent vinyl 3D collectible figures, dreamy cozy nighttime diorama lighting"
+        )
         palette = {
             "bg_top": (30, 27, 75),  # Deep nighttime indigo
             "bg_bottom": (15, 23, 42),  # Midnight slate

@@ -1,6 +1,9 @@
 # Dockerfile for Chronos Frame Agent (Portainer / Asustor NAS / Local deployment)
 FROM python:3.11-slim
 
+# Install system timezone data for accurate local time-of-day styling
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/*
+
 # Install uv package manager
 RUN pip install --no-cache-dir uv
 

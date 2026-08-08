@@ -7,7 +7,7 @@
 ## ✨ Features
 
 - **Autonomous 15-Minute News Ingestion**: Fetches top 5 global headlines, applies content safety filters, and deduplicates stories using sliding-window Jaccard keyword memory.
-- **Dynamic 9:16 Portrait Generation**: Produces 1080x1920 portrait bulletin art using Nano Banana 2 / Gemini image models with dynamic time-of-day styling (Morning Retro-Pop, Midday Claymation, Evening Luminescent).
+- **Dynamic 9:16 Portrait Generation**: Produces 1080x1920 portrait bulletin art using Nano Banana 2 / Gemini image models with Nano Banana iconic 3D figure styling (Sunrise Vinyl Pop, Electric Matte Figurine, Luminescent Cyber-Toy).
 - **Synchronized 5-Minute Display Rotation**: Coordinates display slideshows via Server-Sent Events (SSE), eliminating client reload race conditions.
 - **Full-Screen Ambient Display**: Pure edge-to-edge canvas with hardware-accelerated dual-layer GPU crossfades and memory pre-rendering.
 - **100% Keyless ADC Security**: Connects to Google Cloud Vertex AI using auto-refreshing Application Default Credentials (ADC) with zero static private keys on disk.

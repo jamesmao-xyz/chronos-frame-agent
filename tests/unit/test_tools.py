@@ -4,8 +4,10 @@ import os
 from PIL import Image
 
 from app.prompt_loader import (
+    get_current_local_time,
     get_news_anchor_prompt,
     get_photo_frame_prompt,
+    get_time_of_day_style,
 )
 from app.tools import WEB_DIR, imagen_tool, news_tool, publisher_tool
 
@@ -25,16 +27,16 @@ def test_prompt_loader():
 
     # Test morning period (08:00)
     morning_data = get_photo_frame_prompt("Test headline summary", hour=8)
-    assert "Vivid Retro-Pop" in morning_data["prompt"]
-    assert "90s lo-fi anime style" in morning_data["prompt"]
+    assert "Sunrise Vinyl Pop" in morning_data["prompt"]
+    assert "Nano Banana iconic 3D figure style" in morning_data["prompt"]
 
     # Test midday period (13:00)
     midday_data = get_photo_frame_prompt("Test headline summary", hour=13)
-    assert "Electric Claymation" in midday_data["prompt"]
+    assert "Electric Matte Figurine" in midday_data["prompt"]
 
     # Test evening period (20:00)
     evening_data = get_photo_frame_prompt("Test headline summary", hour=20)
-    assert "Luminescent Lo-Fi Digital" in evening_data["prompt"]
+    assert "Luminescent Cyber-Toy" in evening_data["prompt"]
 
 
 def test_news_tool():
@@ -80,3 +82,18 @@ def test_publisher_tool_fifo_queue():
     assert os.path.exists(os.path.join(WEB_DIR, "image_3.png"))
     assert not os.path.exists(os.path.join(WEB_DIR, "image_4.png"))
     assert not os.path.exists(os.path.join(WEB_DIR, "image_5.png"))
+
+
+def test_timezone_handling(monkeypatch):
+    """Verify get_current_local_time and style computation respect the TZ environment variable."""
+    # Test Sydney timezone resolution
+    monkeypatch.setenv("TZ", "Australia/Sydney")
+    sydney_time = get_current_local_time()
+    assert sydney_time.tzinfo is not None
+    assert "Sydney" in str(sydney_time.tzinfo)
+
+    # Verify style computation works with default hour using local time
+    style_info = get_time_of_day_style()
+    assert "period_name" in style_info
+    assert "modifier" in style_info
+    assert "palette" in style_info

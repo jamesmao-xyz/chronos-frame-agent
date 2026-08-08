@@ -9,7 +9,7 @@ import asyncio
 import json
 import logging
 import os
-from datetime import datetime
+import time
 
 from aiohttp import web
 from dotenv import load_dotenv
@@ -18,8 +18,11 @@ from google.genai import types
 
 from app.agent import app
 from app.event_hub import event_hub
+from app.prompt_loader import get_current_local_time
 
 load_dotenv()
+if hasattr(time, "tzset") and "TZ" in os.environ:
+    time.tzset()
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -52,7 +55,8 @@ def init_event_hub_from_disk():
             logger.warning(f"Could not load playlist.json from disk: {e}")
 
     # Fallback to inspecting static image files
-    v_tag = int(datetime.now().timestamp())
+    current_time = get_current_local_time()
+    v_tag = int(current_time.timestamp())
     found_playlist = []
     for idx, name in enumerate(["image_1.png", "image_2.png", "image_3.png"]):
         fpath = os.path.join(WEB_DIR, name)
@@ -64,7 +68,7 @@ def init_event_hub_from_disk():
                     "url": f"{name}?v={v_tag}",
                     "label": f"{name} ({label})",
                     "age": label,
-                    "timestamp": datetime.now().strftime("%A, %B %d, %Y • %H:%M"),
+                    "timestamp": current_time.strftime("%A, %B %d, %Y • %H:%M"),
                     "index": idx,
                 }
             )
@@ -142,7 +146,7 @@ async def api_trigger_generation_handler(request: web.Request) -> web.Response:
     background_tasks.add(task)
     task.add_done_callback(background_tasks.discard)
     return web.json_response(
-        {"status": "triggered", "timestamp": datetime.now().isoformat()}
+        {"status": "triggered", "timestamp": get_current_local_time().isoformat()}
     )
 
 

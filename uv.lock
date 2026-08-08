@@ -351,6 +351,7 @@ dependencies = [
     { name = "google-genai" },
     { name = "opentelemetry-instrumentation-google-genai" },
     { name = "pillow" },
+    { name = "tzdata" },
 ]
 
 [package.optional-dependencies]
@@ -387,6 +388,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=10.0.0" },
     { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.4.6,<1.0.0" },
     { name = "ty", marker = "extra == 'lint'", specifier = ">=0.0.1a0" },
+    { name = "tzdata", specifier = ">=2024.1" },
 ]
 provides-extras = ["eval", "lint"]
 

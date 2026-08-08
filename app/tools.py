@@ -4,7 +4,6 @@ import io
 import json
 import logging
 import os
-from datetime import datetime
 from typing import Any
 
 from google.genai import Client, types
@@ -13,6 +12,7 @@ from PIL import Image, ImageDraw
 from app.event_hub import event_hub
 from app.memory import memory
 from app.prompt_loader import (
+    get_current_local_time,
     get_news_anchor_prompt,
     get_photo_frame_prompt,
     get_time_of_day_style,
@@ -25,55 +25,66 @@ WEB_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "smart_frame_web")
 )
 
-# Comprehensive fallback news story pool (used when offline/fallback to rotate without repeats)
+# Comprehensive multi-category fallback news pool (used when offline to rotate without repeats)
 FALLBACK_NEWS_POOL = [
-    {
-        "title": "Global Technology Summit Unveils Next-Gen AI Silicon",
-        "summary": "Tech leaders showcase ultra-efficient neural processing chips designed for edge smart devices.",
-    },
+    # 1. World Affairs & Global Cooperation
     {
         "title": "International Clean Energy Accord Expands Global Renewables",
         "summary": "40 nations commit to doubling solar, wind, and smart battery storage across national grids.",
-    },
-    {
-        "title": "Space Station Launches New Orbital Microgravity Laboratory",
-        "summary": "Astronauts install modular science bays for advanced biotechnology and crystallographic research.",
     },
     {
         "title": "Historic Global Marine Conservation Treaty Ratified",
         "summary": "Over 30% of international waters are officially designated as protected ecological sanctuaries.",
     },
     {
-        "title": "Precision Nanomedicine Approvals Accelerate Targeted Therapies",
-        "summary": "Breakthrough nanocarrier drug deliveries cleared for oncology and non-invasive gene therapies.",
-    },
-    {
-        "title": "Quantum Computing Milestone Achieved in Error Correction",
-        "summary": "Researchers demonstrate fault-tolerant logical qubits with tenfold coherence improvements.",
-    },
-    {
-        "title": "Deep Sea Expedition Maps Unexplored Pacific Geothermal Vents",
-        "summary": "Autonomous submersibles discover thriving endemic ecosystems and unique mineral formations.",
-    },
-    {
-        "title": "Commercial Fusion Reactor Prototype Sustains Plasma Record",
-        "summary": "High-temperature superconducting magnets maintain steady-state fusion plasma for two hours.",
-    },
-    {
         "title": "Global Reforestation Initiative Reaches 5 Billion Trees",
         "summary": "Satellite telemetry confirms widespread canopy recovery across sub-Saharan and Amazonian corridors.",
     },
     {
+        "title": "Pacific Island Forum Launches Joint Climate Resilience Fund",
+        "summary": "Nations pool resources for coastal defense infrastructure and decentralized solar power networks.",
+    },
+    {
+        "title": "International Antarctic Treaty Adds New Protected Marine Zones",
+        "summary": "Polar scientists and diplomats agree on strict safeguards for vital krill and penguin breeding habitats.",
+    },
+    {
+        "title": "Cross-Border Renewable Power Grid Connects Mediterranean Nations",
+        "summary": "High-voltage undersea interconnector begins transmitting clean wind and solar energy between continents.",
+    },
+    # 2. Science, Medicine & Health
+    {
+        "title": "Precision Nanomedicine Approvals Accelerate Targeted Therapies",
+        "summary": "Breakthrough nanocarrier drug deliveries cleared for oncology and non-invasive gene therapies.",
+    },
+    {
+        "title": "Universal mRNA Vaccine Trials Show High Efficacy Against Multiple Viral Strains",
+        "summary": "Clinical phases confirm broad-spectrum antibody generation protecting against seasonal pathogens.",
+    },
+    {
+        "title": "Neurotechnology Interface Restores Fine Motor Movement",
+        "summary": "Non-invasive brain-computer interfaces enable paralyzed patients to control robotic limbs seamlessly.",
+    },
+    {
+        "title": "Targeted Cellular Therapy Reverses Age-Related Muscle Loss in Trials",
+        "summary": "Novel peptide compounds stimulate stem cell regeneration and restore physical endurance in clinical studies.",
+    },
+    {
+        "title": "Synthetic Biology Team Synthesizes Biodegradable Plastic Alternative from Algae",
+        "summary": "New water-soluble biopolymer dissolves completely in soil without leaving microplastic residues.",
+    },
+    {
+        "title": "Artificial Cornea Implants Restore Vision in Landmark Clinical Series",
+        "summary": "Bioengineered collagen lenses successfully integrate with native ocular tissue across 200 patients.",
+    },
+    # 3. Economy, Business & Sustainable Tech
+    {
+        "title": "Global Technology Summit Unveils Next-Gen AI Silicon",
+        "summary": "Tech leaders showcase ultra-efficient neural processing chips designed for edge smart devices.",
+    },
+    {
         "title": "Next-Gen Solid-State Battery Enters Mass Automotive Production",
         "summary": "High-density energy cells offer 1,000 km range with ten-minute ultra-fast charging.",
-    },
-    {
-        "title": "James Webb Telescope Detects Organic Signatures on Exoplanet",
-        "summary": "Atmospheric spectroscopy reveals atmospheric methane and water vapor in habitable zone world.",
-    },
-    {
-        "title": "Smart Agricultural Robotics Boost Crop Yields by Thirty Percent",
-        "summary": "Autonomous precision farming swarms minimize water consumption and eliminate herbicide runoff.",
     },
     {
         "title": "Transcontinental Magnetic Levitation Transit Corridor Approved",
@@ -84,16 +95,80 @@ FALLBACK_NEWS_POOL = [
         "summary": "Industrial direct-air units sequester one million metric tons of CO2 into basalt rock annually.",
     },
     {
-        "title": "Neurotechnology Interface Restores Fine Motor Movement",
-        "summary": "Non-invasive brain-computer interfaces enable paralyzed patients to control robotic limbs seamlessly.",
+        "title": "Zero-Emission Electric Cargo Vessel Completes Maiden Transatlantic Voyage",
+        "summary": "Autonomous wind-assisted electric container carrier cuts maritime freight emissions by ninety percent.",
+    },
+    {
+        "title": "Global Sovereign Green Bond Issuance Reaches Record High",
+        "summary": "Institutional investors allocate 500 billion dollars toward municipal clean water and transit projects.",
+    },
+    # 4. Culture, Archaeology, Heritage & Sports
+    {
+        "title": "Archaeologists Unearth 4,000-Year-Old Lost Oasis City in Arabian Peninsula",
+        "summary": "Ground-penetrating radar reveals fortified Bronze Age settlement with complex aqueducts and trade markets.",
+    },
+    {
+        "title": "Global Museum Accord Launches Open-Access Digital Heritage Archive",
+        "summary": "Fifty international institutions digitize two million historic artifacts in interactive 3D.",
+    },
+    {
+        "title": "Historic Notre-Dame Reopening Unveils Restored Medieval Vaults",
+        "summary": "Master artisans complete five-year restoration using traditional timber joinery and seismic dampers.",
+    },
+    {
+        "title": "Indigenous Language Revitalization Project Digitizes 50 Endangered Dialects",
+        "summary": "Collaborative linguistic preservation program creates interactive oral history archives for classrooms.",
+    },
+    {
+        "title": "World Heritage Committee Designates Ten New Biosphere Reserves",
+        "summary": "Ancient cloud forests and high-altitude alpine meadows receive formal international protection.",
+    },
+    {
+        "title": "International Youth Games Set New World Record in Sustainable Sports Architecture",
+        "summary": "Multi-sport arena built entirely with mass timber and passive geothermal cooling hosts 80 nations.",
+    },
+    # 5. Agriculture, Food Security & Ocean Discovery
+    {
+        "title": "Smart Agricultural Robotics Boost Crop Yields by Thirty Percent",
+        "summary": "Autonomous precision farming swarms minimize water consumption and eliminate herbicide runoff.",
+    },
+    {
+        "title": "Drought-Resilient Ancient Grain Hybrids Expand Across Arid Farmlands",
+        "summary": "Revitalized heritage sorghum and millet cultivars triple harvest stability in rain-scarce zones.",
+    },
+    {
+        "title": "Deep Sea Expedition Maps Unexplored Pacific Geothermal Vents",
+        "summary": "Autonomous submersibles discover thriving endemic ecosystems and unique mineral formations.",
+    },
+    {
+        "title": "Floating Ocean Clean-Up System Removes One Million Kilograms of Plastic",
+        "summary": "Solar-powered barrier barriers capture marine debris along major river deltas before reaching open sea.",
+    },
+    {
+        "title": "Vertical Farming Facility Powered by Waste Heat Expands Food Supply",
+        "summary": "Indoor hydroponic network produces ten million pounds of leafy greens using ninety-five percent less water.",
+    },
+    {
+        "title": "Coral Reef Acoustic Regeneration Project Shows Rapid Fish Population Recovery",
+        "summary": "Underwater soundscapes mimicking healthy reefs attract juvenile fish species to restored coral nurseries.",
+    },
+    # 6. Advanced Physics & Computing (Balanced)
+    {
+        "title": "Quantum Computing Milestone Achieved in Error Correction",
+        "summary": "Researchers demonstrate fault-tolerant logical qubits with tenfold coherence improvements.",
+    },
+    {
+        "title": "Commercial Fusion Reactor Prototype Sustains Plasma Record",
+        "summary": "High-temperature superconducting magnets maintain steady-state fusion plasma for two hours.",
     },
 ]
 
 
-def news_tool(topic: str = "top 5 global world headlines") -> dict[str, Any]:
+def news_tool(topic: str = "top global world news headlines") -> dict[str, Any]:
     """
-    NewsTool: Connects to news source via Google GenAI to retrieve top 5 global headlines,
-    filters safety/explicit content, and uses agent memory to ensure headlines do NOT repeat across photos.
+    NewsTool: Connects to live news source via Google GenAI with Google Search Grounding to retrieve
+    5 unique, up-to-the-minute global headlines spanning diverse categories (world affairs, business,
+    environment, culture/heritage, science/health), filtering repetition via agent memory.
 
     Args:
         topic: Topic query for global news.
@@ -102,9 +177,12 @@ def news_tool(topic: str = "top 5 global world headlines") -> dict[str, Any]:
         Dict containing top 5 headlines, simple summary text, and timestamp.
     """
     logger.info(
-        f"NewsTool: Fetching 5 unique, non-repeating headlines for topic '{topic}'..."
+        f"NewsTool: Fetching 5 diverse, non-repeating headlines for topic '{topic}'..."
     )
     api_key = os.environ.get("GEMINI_API_KEY")
+    gcp_creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or os.environ.get(
+        "GOOGLE_CLOUD_PROJECT"
+    )
 
     # Retrieve recently featured headlines from agent memory to prevent repetition
     recent_exclusions = memory.get_recent_headlines(limit=25)
@@ -113,22 +191,26 @@ def news_tool(topic: str = "top 5 global world headlines") -> dict[str, Any]:
     chosen_headlines: list[str] = []
     chosen_summaries: list[str] = []
 
-    if (
-        api_key
-        or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-        or os.environ.get("GOOGLE_CLOUD_PROJECT")
-    ):
+    if api_key or gcp_creds:
         try:
             client = Client()
+            current_date_str = get_current_local_time().strftime("%A, %B %d, %Y")
+            prompt_content = (
+                f"Today is {current_date_str}. Search Google News for the latest, freshest global world news today. "
+                f"Provide 8 distinct headlines spanning diverse categories: "
+                f"1) World Politics/Diplomacy, 2) Economy/Business/Markets, 3) Environment/Climate/Wildlife, "
+                f"4) Culture/Arts/Sports, 5) Science/Medicine/Space/Technology. Topic focus: {topic}. "
+                f"DO NOT repeat any of these recently used headlines: {recent_exclusions[:15]}."
+            )
+
+            # Enable Google Search Grounding for live web news retrieval
             response = client.models.generate_content(
                 model="gemini-3.5-flash",
-                contents=(
-                    f"Provide 8 diverse global news headlines for today with a bold title and 1-sentence summary each. "
-                    f"Exclude any of these recently used topics: {recent_exclusions[:10]}. Topic: {topic}"
-                ),
+                contents=prompt_content,
                 config=types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    temperature=0.4,
+                    temperature=0.6,
+                    tools=[types.Tool(google_search=types.GoogleSearch())],
                 ),
             )
             if response.text:
@@ -150,10 +232,10 @@ def news_tool(topic: str = "top 5 global world headlines") -> dict[str, Any]:
                             break
 
                 logger.info(
-                    f"GenAI retrieved {len(chosen_headlines)} unique non-repeating headlines."
+                    f"GenAI retrieved {len(chosen_headlines)} unique non-repeating live headlines."
                 )
         except Exception as e:
-            logger.warning(f"News fetch via GenAI skipped: {e}")
+            logger.warning(f"News fetch via GenAI skipped or fell back: {e}")
 
     # If fewer than 5 unique headlines, rotate fresh stories from fallback pool
     if len(chosen_headlines) < 5:
@@ -186,7 +268,7 @@ def news_tool(topic: str = "top 5 global world headlines") -> dict[str, Any]:
     # Record newly selected headlines in agent memory so subsequent photos do NOT repeat them
     memory.add_headlines(final_headlines)
 
-    timestamp = datetime.now().strftime("%A, %B %d, %Y  •  %H:%M")
+    timestamp = get_current_local_time().strftime("%A, %B %d, %Y  •  %H:%M")
 
     return {
         "status": "success",
@@ -207,7 +289,7 @@ def _generate_procedural_photo_frame_image(
 ) -> Image.Image:
     """
     Generates an ambient smart photo frame graphic in 1080x1920 (9:16 portrait),
-    crafted with time-of-day responsive 90s lo-fi anime styling for at-a-glance viewing.
+    crafted with time-of-day responsive Nano Banana iconic 3D figure styling for at-a-glance viewing.
     """
     style_info = get_time_of_day_style(hour)
     palette = style_info["palette"]
@@ -240,11 +322,11 @@ def _generate_procedural_photo_frame_image(
     # Smart Frame Ambient Header with Style Badge
     draw.text(
         (70, 75),
-        f"CHRONOS  |  90s LO-FI ANIME [{style_info['period_name'].upper()}]",
+        f"CHRONOS  |  NANO BANANA 3D FIGURE [{style_info['period_name'].upper()}]",
         fill=palette["title_color"],
     )
     if not timestamp:
-        timestamp = datetime.now().strftime("%A, %B %d, %Y  •  %H:%M")
+        timestamp = get_current_local_time().strftime("%A, %B %d, %Y  •  %H:%M")
     draw.text((70, 120), timestamp.upper(), fill=(203, 213, 225))
 
     # Parse and render the 5 glanceable news stories
@@ -469,8 +551,9 @@ def publisher_tool(image_data: Any) -> dict[str, Any]:
             pass
 
     # Step 6: Build structured playlist metadata with cache-busting version tags
-    v_tag = int(datetime.now().timestamp())
-    now_str = datetime.now().strftime("%A, %B %d, %Y • %H:%M")
+    current_time = get_current_local_time()
+    v_tag = int(current_time.timestamp())
+    now_str = current_time.strftime("%A, %B %d, %Y • %H:%M")
 
     playlist: list[dict[str, Any]] = []
     if os.path.exists(img1_path):
@@ -514,7 +597,7 @@ def publisher_tool(image_data: Any) -> dict[str, Any]:
         with open(tmp_playlist_path, "w", encoding="utf-8") as f:
             json.dump(
                 {
-                    "updated_at": datetime.now().isoformat(),
+                    "updated_at": current_time.isoformat(),
                     "version": v_tag,
                     "playlist": playlist,
                 },

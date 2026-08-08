@@ -3,13 +3,13 @@
 A vertical {aspect_ratio} portrait artwork (1080x1920) designed for a smart digital photo frame display.
 
 ## Base Artistic Style
-90s lo-fi anime style, soft pastel gradients, whimsical digital painting, cozy storybook illustration.
+Nano Banana iconic 3D figure style, stylized collectible 3D designer toy and vinyl art figurine aesthetic, charming tactile character sculpts, smooth matte vinyl and glossy enamel materials, detailed miniature diorama composition, soft studio key lighting with gentle subsurface scattering and ray-traced ambient occlusion.
 
 ## Dynamic Time-of-Day Infusion
 {time_of_day_style}
 
 ## Visual Narrative & Content
-An imaginative, whimsical storybook anime scene visually illustrating today's top global events:
+An imaginative, whimsical 3D miniature diorama scene featuring iconic stylized 3D collectible figures playfully interacting with and illustrating today's top global events:
 {headline_summary}
 
 ## Composition & Glanceable Typography
