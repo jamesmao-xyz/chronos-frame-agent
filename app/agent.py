@@ -25,9 +25,12 @@ logger = logging.getLogger(__name__)
 
 # Node 1: News fetching and safety summarization
 def news_node(node_input: Any = None) -> dict[str, Any]:
-    """Graph Node 1: Ingest top global news items across balanced categories and summarize."""
+    """Graph Node 1: Ingest diverse news items (max 1 serious global story, mixed with science, Australian news, business, education, arts, entertainment)."""
     logger.info("Executing Graph Node 1: NewsTool")
-    topic = "top global world news across geopolitics, economy, climate, culture, and science"
+    topic = (
+        "diverse headline blend with 1 serious global world story mixed with "
+        "Australian local news, science, business, education, arts & culture, and entertainment"
+    )
     if isinstance(node_input, dict) and node_input.get("topic"):
         topic = node_input["topic"]
     elif isinstance(node_input, str) and node_input.strip():

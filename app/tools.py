@@ -27,55 +27,55 @@ WEB_DIR = os.path.abspath(
 
 # Comprehensive multi-category fallback news pool (used when offline to rotate without repeats)
 FALLBACK_NEWS_POOL = [
-    # 1. World Affairs & Global Cooperation
+    # 1. Australian Local News & Community
     {
-        "title": "International Clean Energy Accord Expands Global Renewables",
-        "summary": "40 nations commit to doubling solar, wind, and smart battery storage across national grids.",
+        "title": "Sydney Harbor Launches World's First Zero-Emission Solar Ferry Fleet",
+        "summary": "Silent solar-electric catamarans begin daily commuter service across Port Jackson.",
     },
     {
-        "title": "Historic Global Marine Conservation Treaty Ratified",
-        "summary": "Over 30% of international waters are officially designated as protected ecological sanctuaries.",
+        "title": "Great Barrier Reef Nursery Coral Planting Breakthrough Announced in Queensland",
+        "summary": "Marine biologists report 90% survival rate for heat-resilient coral larvae grown in land laboratories.",
     },
     {
-        "title": "Global Reforestation Initiative Reaches 5 Billion Trees",
-        "summary": "Satellite telemetry confirms widespread canopy recovery across sub-Saharan and Amazonian corridors.",
+        "title": "Melbourne Street Art and Cultural Festival Transforms Laneways",
+        "summary": "Over 200 international artists construct interactive light sculpture dioramas across downtown precincts.",
     },
     {
-        "title": "Pacific Island Forum Launches Joint Climate Resilience Fund",
-        "summary": "Nations pool resources for coastal defense infrastructure and decentralized solar power networks.",
+        "title": "Outback Dark Sky Sanctuary Designated in Regional Western Australia",
+        "summary": "Astronomers and indigenous rangers partner to preserve pristine stargazing zones for public tourism.",
     },
     {
-        "title": "International Antarctic Treaty Adds New Protected Marine Zones",
-        "summary": "Polar scientists and diplomats agree on strict safeguards for vital krill and penguin breeding habitats.",
+        "title": "Kimberley Wildlife Conservation Project Deploys Solar Drones",
+        "summary": "Autonomous aerial sensors monitor endangered quoll populations and track seasonal waterholes.",
     },
     {
-        "title": "Cross-Border Renewable Power Grid Connects Mediterranean Nations",
-        "summary": "High-voltage undersea interconnector begins transmitting clean wind and solar energy between continents.",
+        "title": "Perth Ocean Wave Energy Converter Connected to Western Grid",
+        "summary": "Submerged wave generators begin delivering zero-carbon electricity to coastal households.",
     },
-    # 2. Science, Medicine & Health
+    # 2. Science, Space & Technology Discoveries
+    {
+        "title": "James Webb Telescope Detects Water Vapor Signature on Habitable Exoplanet",
+        "summary": "Astronomers confirm atmospheric moisture and temperate cloud layers around neighboring star system.",
+    },
     {
         "title": "Precision Nanomedicine Approvals Accelerate Targeted Therapies",
-        "summary": "Breakthrough nanocarrier drug deliveries cleared for oncology and non-invasive gene therapies.",
-    },
-    {
-        "title": "Universal mRNA Vaccine Trials Show High Efficacy Against Multiple Viral Strains",
-        "summary": "Clinical phases confirm broad-spectrum antibody generation protecting against seasonal pathogens.",
+        "summary": "Breakthrough nanocarrier drug deliveries cleared for non-invasive gene therapies.",
     },
     {
         "title": "Neurotechnology Interface Restores Fine Motor Movement",
         "summary": "Non-invasive brain-computer interfaces enable paralyzed patients to control robotic limbs seamlessly.",
     },
     {
-        "title": "Targeted Cellular Therapy Reverses Age-Related Muscle Loss in Trials",
-        "summary": "Novel peptide compounds stimulate stem cell regeneration and restore physical endurance in clinical studies.",
+        "title": "Bioluminescent Plant Innovations Light Up City Parks Naturally",
+        "summary": "Genetically enhanced flora provide soft ambient illumination along night walkways without electricity.",
     },
     {
         "title": "Synthetic Biology Team Synthesizes Biodegradable Plastic Alternative from Algae",
         "summary": "New water-soluble biopolymer dissolves completely in soil without leaving microplastic residues.",
     },
     {
-        "title": "Artificial Cornea Implants Restore Vision in Landmark Clinical Series",
-        "summary": "Bioengineered collagen lenses successfully integrate with native ocular tissue across 200 patients.",
+        "title": "Quantum Sensor Array Detects Subsurface Aquifers with High Precision",
+        "summary": "Portable gravimetric sensors pinpoint deep groundwater reserves in drought-prone agricultural regions.",
     },
     # 3. Economy, Business & Sustainable Tech
     {
@@ -87,10 +87,6 @@ FALLBACK_NEWS_POOL = [
         "summary": "High-density energy cells offer 1,000 km range with ten-minute ultra-fast charging.",
     },
     {
-        "title": "Transcontinental Magnetic Levitation Transit Corridor Approved",
-        "summary": "High-speed zero-emission maglev network connects major industrial hubs at 600 km/h.",
-    },
-    {
         "title": "Atmospheric Direct Air Carbon Capture Facility Opens at Scale",
         "summary": "Industrial direct-air units sequester one million metric tons of CO2 into basalt rock annually.",
     },
@@ -99,10 +95,27 @@ FALLBACK_NEWS_POOL = [
         "summary": "Autonomous wind-assisted electric container carrier cuts maritime freight emissions by ninety percent.",
     },
     {
-        "title": "Global Sovereign Green Bond Issuance Reaches Record High",
-        "summary": "Institutional investors allocate 500 billion dollars toward municipal clean water and transit projects.",
+        "title": "Circular Fashion Alliance Achieves 100% Textile Recycling Milestone",
+        "summary": "Global apparel brands convert post-consumer garments into virgin-quality organic threads.",
     },
-    # 4. Culture, Archaeology, Heritage & Sports
+    # 4. Education, Learning & Youth
+    {
+        "title": "Interactive AI Tutors Rolled Out Across 5,000 Public Schools",
+        "summary": "Personalized math and literacy mentors double student comprehension in pilot classrooms.",
+    },
+    {
+        "title": "Global Open Library Initiative Digitizes 10 Million Rare Manuscripts",
+        "summary": "Scholarship consortium offers free high-resolution interactive access to historical primary sources.",
+    },
+    {
+        "title": "International Youth Robotics Championship Honors Zero-Waste Autonomous Designs",
+        "summary": "Student teams build ocean cleanup bots using recycled ocean plastics and low-power microcontrollers.",
+    },
+    {
+        "title": "University Marine Science Station Launches Floating Student Laboratory",
+        "summary": "Undergraduate oceanographers collect real-time climate data along coastal currents onboard solar research vessel.",
+    },
+    # 5. Arts, Culture, Heritage & Sports
     {
         "title": "Archaeologists Unearth 4,000-Year-Old Lost Oasis City in Arabian Peninsula",
         "summary": "Ground-penetrating radar reveals fortified Bronze Age settlement with complex aqueducts and trade markets.",
@@ -116,50 +129,38 @@ FALLBACK_NEWS_POOL = [
         "summary": "Master artisans complete five-year restoration using traditional timber joinery and seismic dampers.",
     },
     {
-        "title": "Indigenous Language Revitalization Project Digitizes 50 Endangered Dialects",
-        "summary": "Collaborative linguistic preservation program creates interactive oral history archives for classrooms.",
-    },
-    {
-        "title": "World Heritage Committee Designates Ten New Biosphere Reserves",
-        "summary": "Ancient cloud forests and high-altitude alpine meadows receive formal international protection.",
-    },
-    {
-        "title": "International Youth Games Set New World Record in Sustainable Sports Architecture",
+        "title": "International Youth Games Set New Record in Sustainable Sports Architecture",
         "summary": "Multi-sport arena built entirely with mass timber and passive geothermal cooling hosts 80 nations.",
     },
-    # 5. Agriculture, Food Security & Ocean Discovery
+    # 6. Entertainment, Pop Culture & Lighthearted News
     {
-        "title": "Smart Agricultural Robotics Boost Crop Yields by Thirty Percent",
-        "summary": "Autonomous precision farming swarms minimize water consumption and eliminate herbicide runoff.",
+        "title": "Indie Animated Film Wins International Grand Prix for Visual Innovation",
+        "summary": "Stop-motion masterpiece crafted with 3D-printed clay figurines captivates global audiences.",
     },
     {
-        "title": "Drought-Resilient Ancient Grain Hybrids Expand Across Arid Farmlands",
-        "summary": "Revitalized heritage sorghum and millet cultivars triple harvest stability in rain-scarce zones.",
+        "title": "Global Symphony Orchestra Performs Live Soundtrack Synchronized to Satellite Aurora Images",
+        "summary": "Open-air concert blends classical orchestration with real-time solar wind data visualizations.",
     },
     {
-        "title": "Deep Sea Expedition Maps Unexplored Pacific Geothermal Vents",
-        "summary": "Autonomous submersibles discover thriving endemic ecosystems and unique mineral formations.",
+        "title": "Vintage Vinyl Record Revival Sales Surpass Digital CDs for Fifth Consecutive Year",
+        "summary": "Audio enthusiasts embrace analog tactile records and artistic sleeve diorama design.",
     },
     {
-        "title": "Floating Ocean Clean-Up System Removes One Million Kilograms of Plastic",
-        "summary": "Solar-powered barrier barriers capture marine debris along major river deltas before reaching open sea.",
+        "title": "Global Retro Gaming Championship Celebrates 40th Anniversary of Classic Platformers",
+        "summary": "Competitors from 50 nations gather for speedrunning charity event raising funds for STEM education.",
+    },
+    # 7. World Affairs & Global Cooperation (Max 1 serious story per bulletin)
+    {
+        "title": "International Clean Energy Accord Expands Global Renewables",
+        "summary": "40 nations commit to doubling solar, wind, and smart battery storage across national grids.",
     },
     {
-        "title": "Vertical Farming Facility Powered by Waste Heat Expands Food Supply",
-        "summary": "Indoor hydroponic network produces ten million pounds of leafy greens using ninety-five percent less water.",
+        "title": "Historic Global Marine Conservation Treaty Ratified",
+        "summary": "Over 30% of international waters are officially designated as protected ecological sanctuaries.",
     },
     {
-        "title": "Coral Reef Acoustic Regeneration Project Shows Rapid Fish Population Recovery",
-        "summary": "Underwater soundscapes mimicking healthy reefs attract juvenile fish species to restored coral nurseries.",
-    },
-    # 6. Advanced Physics & Computing (Balanced)
-    {
-        "title": "Quantum Computing Milestone Achieved in Error Correction",
-        "summary": "Researchers demonstrate fault-tolerant logical qubits with tenfold coherence improvements.",
-    },
-    {
-        "title": "Commercial Fusion Reactor Prototype Sustains Plasma Record",
-        "summary": "High-temperature superconducting magnets maintain steady-state fusion plasma for two hours.",
+        "title": "Global Reforestation Initiative Reaches 5 Billion Trees",
+        "summary": "Satellite telemetry confirms widespread canopy recovery across sub-Saharan and Amazonian corridors.",
     },
 ]
 
@@ -196,11 +197,17 @@ def news_tool(topic: str = "top global world news headlines") -> dict[str, Any]:
             client = Client()
             current_date_str = get_current_local_time().strftime("%A, %B %d, %Y")
             prompt_content = (
-                f"Today is {current_date_str}. Search Google News for the latest, freshest global world news today. "
+                f"Today is {current_date_str}. Search Google News for the latest, freshest news today. "
                 f"Provide 8 distinct headlines spanning diverse categories: "
-                f"1) World Politics/Diplomacy, 2) Economy/Business/Markets, 3) Environment/Climate/Wildlife, "
-                f"4) Culture/Arts/Sports, 5) Science/Medicine/Space/Technology. Topic focus: {topic}. "
-                f"DO NOT repeat any of these recently used headlines: {recent_exclusions[:15]}."
+                f"1) World Affairs/Diplomacy (AT MOST 1 headline), "
+                f"2) Australian Local News & Community, "
+                f"3) Science, Space & Tech Discoveries, "
+                f"4) Business & Sustainable Economy, "
+                f"5) Education & Learning, "
+                f"6) Arts, Culture & Heritage, "
+                f"7) Entertainment & Pop Culture. "
+                f"Topic focus: {topic}. "
+                f"DO NOT repeat any of these recently used headlines: {recent_exclusions[:25]}."
             )
 
             # Enable Google Search Grounding for live web news retrieval

@@ -62,18 +62,19 @@ class HeadlineMemory:
         except Exception as e:
             logger.warning(f"Failed to save headline memory to {self.filepath}: {e}")
 
-    def get_recent_headlines(self, limit: int = 15) -> list[str]:
+    def get_recent_headlines(self, limit: int = 25) -> list[str]:
         """
         Returns the list of recently featured headline titles.
-        Default limit is 15 (matching the 3-image FIFO gallery: 3 images x 5 headlines).
+        Default limit is 25 (covering ~5 generation cycles).
         """
         return [item["title"] for item in self._history[-limit:] if "title" in item]
 
     def is_duplicate(self, title: str) -> bool:
         """
-        Checks if a headline is a duplicate of a recently used headline using keyword matching.
+        Checks if a headline is a duplicate of a recently used headline using key entity & keyword overlap matching.
         """
-        normalized_input = self._normalize(title)
+        clean_title = self._clean_title(title)
+        normalized_input = self._normalize(clean_title)
         input_keywords = {w for w in normalized_input.split() if len(w) > 3}
         if not input_keywords:
             return False
@@ -83,11 +84,23 @@ class HeadlineMemory:
             normalized_past = self._normalize(past_title)
             past_keywords = {w for w in normalized_past.split() if len(w) > 3}
 
-            # Jaccard keyword overlap
+            # Direct title prefix / substring check
+            if (
+                normalized_input in normalized_past
+                or normalized_past in normalized_input
+            ):
+                return True
+
+            # Key entity keyword overlap check
             intersection = input_keywords.intersection(past_keywords)
             union = input_keywords.union(past_keywords)
-            if union and (len(intersection) / len(union)) > 0.45:
+            if union and (len(intersection) / len(union)) > 0.35:
                 return True
+
+            # If 2 or more significant keywords match (out of <=5 keywords), treat as duplicate
+            if len(input_keywords) <= 6 and len(intersection) >= 2:
+                return True
+
         return False
 
     def add_headlines(self, headlines: list[str]) -> None:

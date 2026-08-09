@@ -31,7 +31,7 @@ def get_news_anchor_prompt(recent_exclusions: list[str] | None = None) -> str:
     if recent_exclusions:
         exclusions_block = (
             "\n\n## Recently Featured Headlines to Avoid (DO NOT REPEAT):\n"
-            + "\n".join(f"- {title}" for title in recent_exclusions[:15])
+            + "\n".join(f"- {title}" for title in recent_exclusions[:25])
         )
         return base_prompt + exclusions_block
     return base_prompt
@@ -110,11 +110,11 @@ def get_photo_frame_prompt(
     style_info = get_time_of_day_style(hour)
     template = _read_prompt_file("photo_frame_image.md")
 
-    # Format the prompt
+    # Format the prompt with full headline summary
     formatted_prompt = template.format(
         aspect_ratio=aspect_ratio,
         time_of_day_style=style_info["modifier"],
-        headline_summary=headline_summary[:350],
+        headline_summary=headline_summary[:1500],
     )
 
     return {"prompt": formatted_prompt, "style_info": style_info}

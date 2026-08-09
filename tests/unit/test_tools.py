@@ -17,6 +17,9 @@ def test_prompt_loader():
     news_prompt = get_news_anchor_prompt()
     assert "News Anchor System Prompt" in news_prompt
     assert "Deduplication" in news_prompt
+    assert "Australian Local News" in news_prompt
+    assert "Entertainment & Pop Culture" in news_prompt
+    assert "AT MOST ONE" in news_prompt
 
     # Test dynamic exclusion passing
     news_prompt_with_exclusions = get_news_anchor_prompt(
@@ -25,10 +28,12 @@ def test_prompt_loader():
     assert "Recently Featured Headlines to Avoid" in news_prompt_with_exclusions
     assert "Headline A" in news_prompt_with_exclusions
 
-    # Test morning period (08:00)
-    morning_data = get_photo_frame_prompt("Test headline summary", hour=8)
-    assert "Sunrise Vinyl Pop" in morning_data["prompt"]
-    assert "Nano Banana iconic 3D figure style" in morning_data["prompt"]
+    # Test long headline summary is not truncated early
+    long_summary = "A" * 600
+    prompt_data = get_photo_frame_prompt(long_summary, hour=8)
+    assert len(prompt_data["prompt"]) > 600
+    assert "Sunrise Vinyl Pop" in prompt_data["prompt"]
+    assert "Nano Banana iconic 3D figure style" in prompt_data["prompt"]
 
     # Test midday period (13:00)
     midday_data = get_photo_frame_prompt("Test headline summary", hour=13)
