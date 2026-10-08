@@ -138,13 +138,13 @@ The agent operates on an autonomous **15-minute recurring generation schedule**,
 ## 5. Docker Packaging & Deployment
 
 - **Base Image**: `python:3.11-slim` with `uv` package manager.
-- **Port**: Exposes port `8080`.
+- **Port**: Exposes port `8168`.
 - **Container Execution**:
   ```dockerfile
   CMD ["python", "run_loop.py"]
   ```
 - **Environment Variables**:
-  - `PORT`: Web server port (default: `8080`).
+  - `PORT`: Web server port (default: `8168`).
   - `SCHEDULE_INTERVAL_SECONDS`: News bulletin generation interval (default: `900` / 15 min).
   - `ROTATION_INTERVAL_SECONDS`: Slideshow photo rotation interval (default: `300` / 5 min).
   - `GOOGLE_APPLICATION_CREDENTIALS`: Path to Application Default Credentials JSON.

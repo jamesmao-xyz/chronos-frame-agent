@@ -212,12 +212,15 @@ def news_tool(topic: str = "top global world news headlines") -> dict[str, Any]:
 
             # Enable Google Search Grounding for live web news retrieval
             response = client.models.generate_content(
-                model="gemini-3.5-flash",
+                model="gemini-3.8-flash",
                 contents=prompt_content,
                 config=types.GenerateContentConfig(
                     system_instruction=system_prompt,
                     temperature=0.6,
                     tools=[types.Tool(google_search=types.GoogleSearch())],
+                    thinking_config=types.ThinkingConfig(
+                        thinking_level=types.ThinkingLevel.LOW
+                    ),
                 ),
             )
             if response.text:
@@ -427,8 +430,8 @@ def imagen_tool(
 
             # Target actual image generation models
             image_model_candidates = [
+                "gemini-nano-banana-2.1",
                 "gemini-3.1-flash-image",
-                "gemini-2.5-flash-image",
             ]
 
             for model_name in image_model_candidates:
