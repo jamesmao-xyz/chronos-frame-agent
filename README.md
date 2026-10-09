@@ -154,7 +154,7 @@ chronos-frame-agent/
 | `ROTATION_INTERVAL_SECONDS` | `300` | Frequency (in seconds) to cycle display through the 3-image queue (5 minutes). |
 | `GOOGLE_APPLICATION_CREDENTIALS` | — | Path to the ADC JSON credentials file. |
 | `GOOGLE_CLOUD_PROJECT` | — | Google Cloud project ID for Vertex AI. |
-| `GOOGLE_CLOUD_LOCATION` | `us-central1` | GCP region for Vertex AI endpoints. |
+| `GOOGLE_CLOUD_LOCATION` | `global` | GCP region for Vertex AI endpoints. |
 | `GOOGLE_GENAI_USE_VERTEXAI` | `true` | Enables Vertex AI mode in `google-genai`. |
 | `GEMINI_API_KEY` | — | Optional API key for Google GenAI (alternative to ADC). |
 | `TZ` | `Australia/Sydney` | Local timezone for time-of-day styling and bulletin timestamps. |
