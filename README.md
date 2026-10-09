@@ -183,7 +183,7 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/secrets/application_default_credentials.json
       - GOOGLE_CLOUD_PROJECT=<YOUR_GCP_PROJECT_ID>
-      - GOOGLE_CLOUD_LOCATION=us-central1
+      - GOOGLE_CLOUD_LOCATION=global
       - GOOGLE_GENAI_USE_VERTEXAI=true
       - PORT=8168
       - SCHEDULE_INTERVAL_SECONDS=900
